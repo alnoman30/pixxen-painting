@@ -1,84 +1,128 @@
-<body class="bg-[#f3f4f6] min-h-screen flex items-center justify-center p-4 sm:p-8 font-sans text-gray-800">
-
-    <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-
-        <!-- First Grid Item: Single Clean Image of the Painter -->
-        <div class="lg:col-span-1 relative rounded-3xl overflow-hidden shadow-xl bg-[#d1d8cc] flex flex-col justify-end min-h-[500px] lg:min-h-[650px]">
-            <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop" 
-                 alt="Painter with roller" 
-                 class="absolute inset-0 w-full h-full object-cover object-center"
-                 onerror="this.src='https://placehold.co/600x800/cbd5e1/475569?text=Painter';">
+    <section class="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-extrabold tracking-tight text-neutral-900 leading-[1.2] mb-4">
+                LOGO, BRAND, & WEBSITE FOR YOUR <span class="inline-block border-2 border-[#b5db53] bg-[#e7f4c3]/60 text-neutral-900 px-2 py-0.5 rounded-md mt-1 sm:mt-0">PAINTING BUSINESS</span>
+            </h1>
+            <p class="text-neutral-600 text-sm sm:text-base leading-relaxed px-2">
+                Pixxen's package gives a painting company everything it needs to look established and win the comparison, from one team at one fixed price.
+            </p>
         </div>
 
-        <!-- Remaining Grid Items: Services Cards (2x2 grid spanning 2 columns on lg screens) -->
-        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- Card 1: Logo Design -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between border border-gray-100">
-                <div class="mb-6">
-                    <!-- Custom SVG Icon: Logo Design Pen Nib -->
-                    <div class="w-12 h-12 rounded-2xl bg-lime-50 flex items-center justify-center text-lime-600 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch mb-10">
+            
+            <!-- Painter Image Card: Moves to bottom on screens below xl using order-2, and sits on left on xl+ using order-1 -->
+            <div class="xl:col-span-5 order-2 xl:order-1 bg-white rounded-3xl p-3 sm:p-4 shadow-sm border border-neutral-100 flex flex-col justify-between overflow-hidden relative min-h-[400px] xl:min-h-[520px]">
+                <div class="absolute inset-0 w-full h-full overflow-hidden rounded-2xl">
+                    <!-- Painter image simulation with background split -->
+                    <div class="absolute inset-0 bg-[#c9d5c5]"></div>
+                    <div class="absolute inset-0 flex items-end justify-start">
+                        <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Painter painting a wall" 
+                             class="w-full h-full object-cover object-center scale-105 transform translate-x-4"
+                             onerror="this.src='https://placehold.co/600x800/c9d5c5/ffffff?text=Painter+Image'">
                     </div>
-                    <h3 class="text-lg font-extrabold text-gray-900 tracking-tight mb-3">LOGO DESIGN</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        A professional mark for your vehicles, uniforms, yard signs, estimates, and website. If your current logo already carries recognition in your market, we refine it and carry it through rather than replacing it.
-                    </p>
+                    <!-- Subtle overlay gradient if needed -->
+                    <div class="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-white/20 to-transparent pointer-events-none"></div>
                 </div>
             </div>
 
-            <!-- Card 2: Brand Identity Direction -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between border border-gray-100">
-                <div class="mb-6">
-                    <!-- Custom SVG Icon: Brand Identity Paint Bucket -->
-                    <div class="w-12 h-12 rounded-2xl bg-yellow-50 flex items-center justify-center text-yellow-600 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
+            <!-- 2x2 Feature Cards Grid: Sits on top for screens below xl using order-1, and on right for xl+ using order-2 -->
+            <div class="xl:col-span-7 order-1 xl:order-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                
+                <!-- Card 1: Logo Design -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-neutral-100 flex flex-col justify-between transition hover:shadow-md">
+                    <div class="mb-6">
+                        <!-- Custom Icon: Logo Design / Pen Tool -->
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5 text-[#b5db53]">
+                            <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
+                                <path d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7a.996.996 0 1 0-1.41 1.41L10.59 12l-4.89 4.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z" transform="rotate(45 12 12)" fill="#8ab82e"/>
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#b5db53"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-extrabold text-neutral-900 text-lg sm:text-xl tracking-tight mb-2">LOGO DESIGN</h3>
+                        <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+                            A professional mark for your vehicles, uniforms, yard signs, estimates, and website. If your current logo already carries recognition in your market, we refine it and carry it through rather than replacing it.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-extrabold text-gray-900 tracking-tight mb-3">BRAND IDENTITY DIRECTION</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Colors, typography, and a visual language chosen deliberately, because a painting company's brand is itself a sample of its taste and precision.
-                    </p>
                 </div>
-            </div>
 
-            <!-- Card 3: A Custom Website -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between border border-gray-100">
-                <div class="mb-6">
-                    <!-- Custom SVG Icon: Custom Website Stack / Blocks -->
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-                        </svg>
+                <!-- Card 2: Brand Identity Direction -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-neutral-100 flex flex-col justify-between transition hover:shadow-md">
+                    <div class="mb-6">
+                        <!-- Custom Icon: Brand Identity / Paint Bucket -->
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5">
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                                <path d="M19 5h-2V3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v2H5a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h1v9c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-9h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM9 4h6v1H9V4zm10 5H5V7h14v2zm-2 11H7v-9h10v9z" fill="#b5db53"/>
+                                <circle cx="12" cy="15" r="2" fill="#e5b80b"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-extrabold text-neutral-900 text-lg sm:text-xl tracking-tight mb-2">BRAND IDENTITY DIRECTION</h3>
+                        <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+                            Colors, typography, and a visual language chosen deliberately, because a painting company’s brand is itself a sample of its taste and precision.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-extrabold text-gray-900 tracking-tight mb-3">A CUSTOM WEBSITE</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Built around your business: your services, your projects, your process, your coverage area. Structured portfolio-first, for the way painting customers actually compare and choose contractors.
-                    </p>
                 </div>
-            </div>
 
-            <!-- Card 4: One Month of Post-Launch Support -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between border border-gray-100">
-                <div class="mb-6">
-                    <!-- Custom SVG Icon: Support Headset -->
-                    <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
-                        </svg>
+                <!-- Card 3: A Custom Website -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-neutral-100 flex flex-col justify-between transition hover:shadow-md">
+                    <div class="mb-6">
+                        <!-- Custom Icon: Custom Website / Swatches / Layout -->
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5">
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="4" width="18" height="6" rx="1.5" fill="#b5db53"/>
+                                <rect x="3" y="14" width="18" height="6" rx="1.5" fill="#e5b80b"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-extrabold text-neutral-900 text-lg sm:text-xl tracking-tight mb-2">A CUSTOM WEBSITE</h3>
+                        <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+                            Built around your business: your services, your projects, your process, your coverage area. Structured portfolio-first, for the way painting customers actually compare and choose contractors.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-extrabold text-gray-900 tracking-tight mb-3">ONE MONTH OF POST-LAUNCH SUPPORT</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        After launch we stay on for a full month, handling adjustments, fixes, and questions while you settle in.
-                    </p>
                 </div>
+
+                <!-- Card 4: One Month of Post-Launch Support -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-neutral-100 flex flex-col justify-between transition hover:shadow-md">
+                    <div class="mb-6">
+                        <!-- Custom Icon: Support / Headset -->
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5">
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2a10 10 0 0 0-10 10v6a3 3 0 0 0 3 3h1v-8H5v-1a7 7 0 1 1 14 0v1h-1v8h1a3 3 0 0 0 3-3v-6a10 10 0 0 0-10-10z" fill="#b5db53"/>
+                                <path d="M3 19h2v3H3zM19 19h2v3h-2z" fill="#e5b80b"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-extrabold text-neutral-900 text-lg sm:text-xl tracking-tight mb-2">ONE MONTH OF POST-LAUNCH SUPPORT</h3>
+                        <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+                            After launch we stay on for a full month, handling adjustments, fixes, and questions while you settle in.
+                        </p>
+                    </div>
+                </div>
+
             </div>
 
         </div>
 
-    </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+            
+            <!-- Price and Inclusion info -->
+            <div class="flex items-center gap-6 w-full sm:w-auto justify-center sm:justify-start">
+                <div>
+                    <div class="text-[11px] sm:text-xs font-bold tracking-wider text-neutral-500 uppercase mb-0.5">EVERYTHING INCLUDED</div>
+                    <div class="text-3xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight">USD 999</div>
+                </div>
+                <div class="hidden sm:block h-10 w-px bg-neutral-200"></div>
+            </div>
 
-</body>
+            <!-- Call to Action Button -->
+            <a href="#book" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-[#ccee6b] hover:bg-[#bde355] text-neutral-900 font-bold px-8 py-4 rounded-2xl shadow-sm transition transform active:scale-95 text-sm sm:text-base">
+                <span>BOOK A FREE 15-MIN CALL</span>
+                <span class="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center text-neutral-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>
+                </span>
+            </a>
+
+        </div>
+
+    </section>
