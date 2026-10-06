@@ -881,3 +881,20 @@ html.lenis body {
 .painting-btn-cta:hover .painting-btn-text-wipe {
   background-position: 0% 0;
 }
+.painting-faq-item {
+  /* clips children to the rounded shape (also set via Tailwind overflow-hidden) */
+  overflow: hidden;
+}
+
+.painting-faq-content {
+  max-height: 0;
+  transition: max-height 0.4s ease;
+}
+
+.painting-faq-content p {
+  margin: 0;
+}
+
+.painting-icon-close img {
+  transition: transform 0.3s ease;
+}

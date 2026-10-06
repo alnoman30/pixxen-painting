@@ -283,261 +283,315 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Painting main heading reveal
+
+// Painting section heading reveal
 document.addEventListener("DOMContentLoaded", function () {
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
+    console.warn("GSAP or ScrollTrigger is missing.");
+    return;
+  }
+  
   gsap.registerPlugin(ScrollTrigger);
 
-  document.querySelectorAll(".painting-heading-swipe").forEach((el) => {
-    if (el.dataset.hlReady) return;
-    el.dataset.hlReady = "1";
+  /* ==========================================
+     1. PAINTING MAIN HEADING SWIPE REVEAL
+     ========================================== */
+  const swipeHeadings = document.querySelectorAll(".painting-heading-swipe");
+  if (swipeHeadings.length > 0) {
+    swipeHeadings.forEach((el) => {
+      if (el.dataset.hlReady) return;
+      el.dataset.hlReady = "1";
 
-    const d = el.dataset;
-    const bgColor = d.hlBg || "#E8C547";
-    const borderColor = d.hlBorder || bgColor;
-    const textColor = d.hlText || "";
-    const layers = Math.max(2, Math.min(4, parseInt(d.hlLayers || "3", 10)));
-    const topOpacity = parseFloat(d.hlSwipeOpacity || "0.6");
-    const duration = parseFloat(d.hlDuration || "1.3");
-    const stagger = parseFloat(d.hlStagger || "0.3");
-    const borderWidth = d.hlBorderWidth || "1px";
-    const radius = d.hlRadius || "0px";
-    const startPoint = d.hlStart || "top 70%";
+      const d = el.dataset;
+      const bgColor = d.hlBg || "#E8C547";
+      const borderColor = d.hlBorder || bgColor;
+      const textColor = d.hlText || "";
+      const layers = Math.max(2, Math.min(4, parseInt(d.hlLayers || "3", 10)));
+      const topOpacity = parseFloat(d.hlSwipeOpacity || "0.6");
+      const duration = parseFloat(d.hlDuration || "1.3");
+      const stagger = parseFloat(d.hlStagger || "0.3");
+      const borderWidth = d.hlBorderWidth || "1px";
+      const radius = d.hlRadius || "0px";
+      const startPoint = d.hlStart || "top 70%";
 
-    el.style.position = "relative";
+      el.style.position = "relative";
 
-    // text wrapper: always on top
-    const text = document.createElement("span");
-    text.style.cssText = "position:relative;z-index:2;";
-    while (el.firstChild) text.appendChild(el.firstChild);
+      // text wrapper: always on top
+      const text = document.createElement("span");
+      text.style.cssText = "position:relative;z-index:2;";
+      while (el.firstChild) text.appendChild(el.firstChild);
 
-    // clip layer
-    const clip = document.createElement("span");
-    clip.setAttribute("aria-hidden", "true");
-    clip.style.cssText = `position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;border-radius:${radius};`;
+      // clip layer
+      const clip = document.createElement("span");
+      clip.setAttribute("aria-hidden", "true");
+      clip.style.cssText = `position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;border-radius:${radius};`;
 
-    // final bg + border (the layer that stays), wiped in with clip-path
-    const deco = document.createElement("span");
-    deco.style.cssText = `position:absolute;inset:0;box-sizing:border-box;border:${borderWidth} solid ${borderColor};background:${bgColor};border-radius:${radius};`;
-    clip.appendChild(deco);
+      // final bg + border
+      const deco = document.createElement("span");
+      deco.style.cssText = `position:absolute;inset:0;box-sizing:border-box;border:${borderWidth} solid ${borderColor};background:${bgColor};border-radius:${radius};`;
+      clip.appendChild(deco);
 
-    // translucent sweeping layers (same bg color, lower opacity, lightest first)
-    const sweepCount = layers - 1;
-    const sweeps = [];
-    for (let i = 0; i < sweepCount; i++) {
-      const s = document.createElement("span");
-      const opacity = topOpacity * ((i + 1) / sweepCount);
-      s.style.cssText = `position:absolute;inset:0;background:${bgColor};opacity:${opacity};`;
-      clip.appendChild(s);
-      sweeps.push(s);
+      // translucent sweeping layers
+      const sweepCount = layers - 1;
+      const sweeps = [];
+      for (let i = 0; i < sweepCount; i++) {
+        const s = document.createElement("span");
+        const opacity = topOpacity * ((i + 1) / sweepCount);
+        s.style.cssText = `position:absolute;inset:0;background:${bgColor};opacity:${opacity};`;
+        clip.appendChild(s);
+        sweeps.push(s);
+      }
+
+      el.append(clip, text);
+
+      gsap.set(deco, { clipPath: "inset(0% 0% 100% 0%)", willChange: "clip-path" });
+      if (sweeps.length > 0) {
+        gsap.set(sweeps, { yPercent: -101, willChange: "transform" });
+      }
+
+      const ease = "power2.inOut";
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          start: startPoint,
+          toggleActions: "play none none none",
+        },
+      });
+
+      sweeps.forEach((s, i) => {
+        tl.to(s, { yPercent: 101, duration, ease }, i * stagger);
+      });
+
+      tl.to(
+        deco,
+        { clipPath: "inset(0% 0% 0% 0%)", duration, ease },
+        sweepCount * stagger
+      );
+
+      if (textColor) {
+        tl.to(
+          text,
+          { color: textColor, duration: duration * 0.6, ease: "power2.out" },
+          sweepCount * stagger + duration * 0.25
+        );
+      }
+    });
+  }
+
+  /* ==========================================
+     2. HEADING SCRUB REVEAL
+     ========================================== */
+  const scrubHeadings = document.querySelectorAll(".painting-scrub-heading");
+  if (scrubHeadings.length > 0) {
+    // Inject styles only once safely
+    if (!document.getElementById("painting-scrub-styles")) {
+      const style = document.createElement("style");
+      style.id = "painting-scrub-styles";
+      style.textContent = `
+        .reveal-mask {
+          display: inline-block;
+          overflow: hidden;
+          vertical-align: top;
+          padding: .08em 0;
+          margin: -.08em 0;
+        }
+
+        .reveal-word {
+          display: inline-block;
+          will-change: transform;
+        }
+
+        .reveal-pill {
+          display: inline-flex;
+          will-change: transform, opacity;
+        }
+      `;
+      document.head.appendChild(style);
     }
 
-    el.append(clip, text);
+    scrubHeadings.forEach((heading) => {
+      if (heading.dataset.scrubReady) return;
+      heading.dataset.scrubReady = "1";
 
-    gsap.set(deco, { clipPath: "inset(0% 0% 100% 0%)", willChange: "clip-path" });
-    gsap.set(sweeps, { yPercent: -101, willChange: "transform" });
+      function splitWords(root) {
+        const walk = (node) => {
+          Array.from(node.childNodes).forEach((child) => {
+            if (child.nodeType === Node.TEXT_NODE) {
+              if (!child.textContent.trim()) return;
 
-    const ease = "power2.inOut"; // gentler than power3/4, reads as slower and smoother
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: el,
-        start: startPoint,
-        toggleActions: "play none none none",
-      },
+              const frag = document.createDocumentFragment();
+
+              child.textContent.split(/(\s+)/).forEach((part) => {
+                if (!part) return;
+
+                if (/^\s+$/.test(part)) {
+                  frag.appendChild(document.createTextNode(part));
+                } else {
+                  const mask = document.createElement("span");
+                  mask.className = "reveal-mask";
+
+                  const inner = document.createElement("span");
+                  inner.className = "reveal-word";
+                  inner.textContent = part;
+
+                  mask.appendChild(inner);
+                  frag.appendChild(mask);
+                }
+              });
+
+              child.replaceWith(frag);
+            } else if (child.nodeType === Node.ELEMENT_NODE) {
+              if (child.querySelector("img") || child.tagName === "IMG") {
+                child.classList.add("reveal-pill");
+              } else {
+                walk(child);
+              }
+            }
+          });
+        };
+
+        walk(root);
+      }
+
+      splitWords(heading);
+
+      const words = Array.from(heading.querySelectorAll(".reveal-word"));
+      const pills = Array.from(heading.querySelectorAll(".reveal-pill"));
+
+      if (!words.length && !pills.length) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (words.length) {
+          gsap.set(words, {
+            yPercent: 110,
+            rotate: 4,
+            transformOrigin: "0% 100%"
+          });
+        }
+
+        if (pills.length) {
+          gsap.set(pills, {
+            opacity: 0,
+            scale: 0.6,
+            transformOrigin: "center center"
+          });
+        }
+
+        const tl = gsap.timeline({
+          paused: true,
+          defaults: {
+            ease: "expo.out"
+          }
+        });
+
+        if (words.length) {
+          tl.to(words, {
+            yPercent: 0,
+            rotate: 0,
+            duration: 1.1,
+            stagger: 0.045
+          });
+        }
+
+        pills.forEach((pill) => {
+          const items = Array.from(heading.querySelectorAll(".reveal-word, .reveal-pill"));
+          const idx = items.indexOf(pill);
+
+          const wordsBefore = items
+            .slice(0, idx)
+            .filter((el) => el.classList.contains("reveal-word")).length;
+
+          tl.to(
+            pill,
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.9,
+              ease: "back.out(1.6)"
+            },
+            wordsBefore * 0.045 + 0.1
+          );
+        });
+
+        ScrollTrigger.create({
+          trigger: heading,
+          start: "top 85%",
+          once: true,
+          onEnter: () => tl.play()
+        });
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        if (words.length) gsap.set(words, { yPercent: 0, rotate: 0 });
+        if (pills.length) gsap.set(pills, { opacity: 1, scale: 1 });
+      });
     });
+  }
 
-    // each layer travels top → bottom, one after another
-    sweeps.forEach((s, i) => {
-      tl.to(s, { yPercent: 101, duration, ease }, i * stagger);
+  // Final unified refresh
+  ScrollTrigger.refresh();
+});
+
+
+// painting FAQ section
+document.addEventListener("DOMContentLoaded", function () {
+  const faqItems = document.querySelectorAll(".painting-faq-item");
+
+  function closeItem(item) {
+    const trigger = item.querySelector(".painting-faq-trigger");
+    const content = item.querySelector(".painting-faq-content");
+    const icon = item.querySelector(".painting-icon-close img");
+
+    item.classList.remove("active");
+    content.style.maxHeight = "0px";
+    trigger.setAttribute("aria-expanded", "false");
+    if (icon) icon.style.transform = "rotate(0deg)";
+  }
+
+  function openItem(item) {
+    const trigger = item.querySelector(".painting-faq-trigger");
+    const content = item.querySelector(".painting-faq-content");
+    const icon = item.querySelector(".painting-icon-close img");
+
+    item.classList.add("active");
+    content.style.maxHeight = content.scrollHeight + "px";
+    trigger.setAttribute("aria-expanded", "true");
+    if (icon) icon.style.transform = "rotate(45deg)";
+  }
+
+  faqItems.forEach(function (item) {
+    const trigger = item.querySelector(".painting-faq-trigger");
+
+    function toggle() {
+      const isOpen = item.classList.contains("active");
+
+      // Close all FAQs
+      faqItems.forEach(closeItem);
+
+      // Open clicked FAQ
+      if (!isOpen) openItem(item);
+    }
+
+    trigger.addEventListener("click", toggle);
+
+    // keyboard support, since the trigger is a div with role="button"
+    trigger.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
     });
+  });
 
-    // final bg + border wipe in top → bottom right behind the last sweep
-    tl.to(
-      deco,
-      { clipPath: "inset(0% 0% 0% 0%)", duration, ease },
-      sweepCount * stagger
+  // keep the open item's height correct when the screen is resized
+  window.addEventListener("resize", function () {
+    const openContent = document.querySelector(
+      ".painting-faq-item.active .painting-faq-content"
     );
-
-    // text color eases to its final color while the last layers pass
-    if (textColor) {
-      tl.to(
-        text,
-        { color: textColor, duration: duration * 0.6, ease: "power2.out" },
-        sweepCount * stagger + duration * 0.25
-      );
+    if (openContent) {
+      openContent.style.maxHeight = openContent.scrollHeight + "px";
     }
   });
 });
-
-// Heading SCrub reveal
-(function () {
-  gsap.registerPlugin(ScrollTrigger);
-
-  const headings = document.querySelectorAll(".painting-scrub-heading");
-  if (!headings.length) return;
-
-  /* ---------- Styles ---------- */
-  const style = document.createElement("style");
-  style.textContent = `
-    .reveal-mask {
-      display: inline-block;
-      overflow: hidden;
-      vertical-align: top;
-      padding: .08em 0;
-      margin: -.08em 0;
-    }
-
-    .reveal-word {
-      display: inline-block;
-      will-change: transform;
-    }
-
-    .reveal-pill {
-      display: inline-flex;
-      will-change: transform, opacity;
-    }
-  `;
-  document.head.appendChild(style);
-
-  headings.forEach((heading) => {
-
-    /* ---------- 1. Split into masked words ---------- */
-    function splitWords(root) {
-      const walk = (node) => {
-        Array.from(node.childNodes).forEach((child) => {
-
-          if (child.nodeType === Node.TEXT_NODE) {
-            if (!child.textContent.trim()) return;
-
-            const frag = document.createDocumentFragment();
-
-            child.textContent.split(/(\s+)/).forEach((part) => {
-              if (!part) return;
-
-              if (/^\s+$/.test(part)) {
-                frag.appendChild(document.createTextNode(part));
-              } else {
-                const mask = document.createElement("span");
-                mask.className = "reveal-mask";
-
-                const inner = document.createElement("span");
-                inner.className = "reveal-word";
-                inner.textContent = part;
-
-                mask.appendChild(inner);
-                frag.appendChild(mask);
-              }
-            });
-
-            child.replaceWith(frag);
-
-          } else if (child.nodeType === Node.ELEMENT_NODE) {
-
-            if (child.querySelector("img") || child.tagName === "IMG") {
-              child.classList.add("reveal-pill");
-            } else {
-              walk(child);
-            }
-
-          }
-        });
-      };
-
-      walk(root);
-    }
-
-    splitWords(heading);
-
-    /* ---------- 2. Animation ---------- */
-    const words = heading.querySelectorAll(".reveal-word");
-    const pills = heading.querySelectorAll(".reveal-pill");
-
-    const mm = gsap.matchMedia();
-
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-
-      gsap.set(words, {
-        yPercent: 110,
-        rotate: 4,
-        transformOrigin: "0% 100%"
-      });
-
-      gsap.set(pills, {
-        opacity: 0,
-        scale: 0.6,
-        transformOrigin: "center center"
-      });
-
-      const tl = gsap.timeline({
-        paused: true,
-        defaults: {
-          ease: "expo.out"
-        }
-      });
-
-      tl.to(words, {
-        yPercent: 0,
-        rotate: 0,
-        duration: 1.1,
-        stagger: 0.045
-      });
-
-      /* Pills pop in at their place in the sentence */
-      pills.forEach((pill) => {
-
-        const items = heading.querySelectorAll(
-          ".reveal-word, .reveal-pill"
-        );
-
-        const idx = Array.from(items).indexOf(pill);
-
-        const wordsBefore = Array.from(items)
-          .slice(0, idx)
-          .filter((el) =>
-            el.classList.contains("reveal-word")
-          ).length;
-
-        tl.to(
-          pill,
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.9,
-            ease: "back.out(1.6)"
-          },
-          wordsBefore * 0.045 + 0.1
-        );
-      });
-
-      ScrollTrigger.create({
-        trigger: heading,
-        start: "top 85%",
-        once: true,
-        onEnter: () => tl.play()
-      });
-
-    });
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-
-      gsap.set(words, {
-        yPercent: 0,
-        rotate: 0
-      });
-
-      gsap.set(pills, {
-        opacity: 1,
-        scale: 1
-      });
-
-    });
-
-  });
-
-  window.addEventListener("load", () => {
-    ScrollTrigger.refresh();
-  });
-
-})();
-
-
-// 
