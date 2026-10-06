@@ -372,103 +372,172 @@ document.addEventListener("DOMContentLoaded", function () {
 (function () {
   gsap.registerPlugin(ScrollTrigger);
 
-  const heading = document.querySelector(".painting-scrub-heading");
-  if (!heading) return;
+  const headings = document.querySelectorAll(".painting-scrub-heading");
+  if (!headings.length) return;
 
-  /* ---------- 1. Split into masked words (inline image pills kept intact) ---------- */
-  function splitWords(root) {
-    const walk = (node) => {
-      Array.from(node.childNodes).forEach((child) => {
-        if (child.nodeType === Node.TEXT_NODE) {
-          if (!child.textContent.trim()) return;
-          const frag = document.createDocumentFragment();
-          child.textContent.split(/(\s+)/).forEach((part) => {
-            if (!part) return;
-            if (/^\s+$/.test(part)) {
-              frag.appendChild(document.createTextNode(part)); // real spaces keep natural wrapping
-            } else {
-              const mask = document.createElement("span");
-              mask.className = "reveal-mask";
-              const inner = document.createElement("span");
-              inner.className = "reveal-word";
-              inner.textContent = part;
-              mask.appendChild(inner);
-              frag.appendChild(mask);
-            }
-          });
-          child.replaceWith(frag);
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          if (child.querySelector("img") || child.tagName === "IMG") {
-            child.classList.add("reveal-pill");
-          } else {
-            walk(child);
-          }
-        }
-      });
-    };
-    walk(root);
-  }
-
-  splitWords(heading);
-
-  /* ---------- 2. Styles ---------- */
+  /* ---------- Styles ---------- */
   const style = document.createElement("style");
   style.textContent = `
-    .reveal-mask{display:inline-block;overflow:hidden;vertical-align:top;
-      padding:.08em 0;margin:-.08em 0}            /* room for ascenders/descenders */
-    .reveal-word{display:inline-block;will-change:transform}
-    .reveal-pill{display:inline-flex;will-change:transform,opacity}
+    .reveal-mask {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+      padding: .08em 0;
+      margin: -.08em 0;
+    }
+
+    .reveal-word {
+      display: inline-block;
+      will-change: transform;
+    }
+
+    .reveal-pill {
+      display: inline-flex;
+      will-change: transform, opacity;
+    }
   `;
   document.head.appendChild(style);
 
-  /* ---------- 3. Animation ---------- */
-  const words = heading.querySelectorAll(".reveal-word");
-  const pills = heading.querySelectorAll(".reveal-pill");
+  headings.forEach((heading) => {
 
-  const mm = gsap.matchMedia();
+    /* ---------- 1. Split into masked words ---------- */
+    function splitWords(root) {
+      const walk = (node) => {
+        Array.from(node.childNodes).forEach((child) => {
 
-  mm.add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.set(words, { yPercent: 110, rotate: 4, transformOrigin: "0% 100%" });
-    gsap.set(pills, { opacity: 0, scale: 0.6, transformOrigin: "center center" });
+          if (child.nodeType === Node.TEXT_NODE) {
+            if (!child.textContent.trim()) return;
 
-    const tl = gsap.timeline({
-      paused: true,
-      defaults: { ease: "expo.out" },
+            const frag = document.createDocumentFragment();
+
+            child.textContent.split(/(\s+)/).forEach((part) => {
+              if (!part) return;
+
+              if (/^\s+$/.test(part)) {
+                frag.appendChild(document.createTextNode(part));
+              } else {
+                const mask = document.createElement("span");
+                mask.className = "reveal-mask";
+
+                const inner = document.createElement("span");
+                inner.className = "reveal-word";
+                inner.textContent = part;
+
+                mask.appendChild(inner);
+                frag.appendChild(mask);
+              }
+            });
+
+            child.replaceWith(frag);
+
+          } else if (child.nodeType === Node.ELEMENT_NODE) {
+
+            if (child.querySelector("img") || child.tagName === "IMG") {
+              child.classList.add("reveal-pill");
+            } else {
+              walk(child);
+            }
+
+          }
+        });
+      };
+
+      walk(root);
+    }
+
+    splitWords(heading);
+
+    /* ---------- 2. Animation ---------- */
+    const words = heading.querySelectorAll(".reveal-word");
+    const pills = heading.querySelectorAll(".reveal-pill");
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+
+      gsap.set(words, {
+        yPercent: 110,
+        rotate: 4,
+        transformOrigin: "0% 100%"
+      });
+
+      gsap.set(pills, {
+        opacity: 0,
+        scale: 0.6,
+        transformOrigin: "center center"
+      });
+
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: {
+          ease: "expo.out"
+        }
+      });
+
+      tl.to(words, {
+        yPercent: 0,
+        rotate: 0,
+        duration: 1.1,
+        stagger: 0.045
+      });
+
+      /* Pills pop in at their place in the sentence */
+      pills.forEach((pill) => {
+
+        const items = heading.querySelectorAll(
+          ".reveal-word, .reveal-pill"
+        );
+
+        const idx = Array.from(items).indexOf(pill);
+
+        const wordsBefore = Array.from(items)
+          .slice(0, idx)
+          .filter((el) =>
+            el.classList.contains("reveal-word")
+          ).length;
+
+        tl.to(
+          pill,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.9,
+            ease: "back.out(1.6)"
+          },
+          wordsBefore * 0.045 + 0.1
+        );
+      });
+
+      ScrollTrigger.create({
+        trigger: heading,
+        start: "top 85%",
+        once: true,
+        onEnter: () => tl.play()
+      });
+
     });
 
-    tl.to(words, {
-      yPercent: 0,
-      rotate: 0,
-      duration: 1.1,
-      stagger: 0.045,
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+
+      gsap.set(words, {
+        yPercent: 0,
+        rotate: 0
+      });
+
+      gsap.set(pills, {
+        opacity: 1,
+        scale: 1
+      });
+
     });
 
-    // Pills pop in at their place in the sentence
-    pills.forEach((pill) => {
-      const items = heading.querySelectorAll(".reveal-word, .reveal-pill");
-      const idx = Array.from(items).indexOf(pill);
-      const wordsBefore = Array.from(items).slice(0, idx).filter((el) =>
-        el.classList.contains("reveal-word")
-      ).length;
-      tl.to(
-        pill,
-        { opacity: 1, scale: 1, duration: 0.9, ease: "back.out(1.6)" },
-        wordsBefore * 0.045 + 0.1
-      );
-    });
-
-    ScrollTrigger.create({
-      trigger: heading,
-      start: "top 85%",
-      once: true, // plays one time only
-      onEnter: () => tl.play(),
-    });
   });
 
-  mm.add("(prefers-reduced-motion: reduce)", () => {
-    gsap.set(words, { yPercent: 0, rotate: 0 });
-    gsap.set(pills, { opacity: 1, scale: 1 });
+  window.addEventListener("load", () => {
+    ScrollTrigger.refresh();
   });
 
-  window.addEventListener("load", () => ScrollTrigger.refresh());
 })();
+
+
+// 

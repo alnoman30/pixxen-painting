@@ -867,7 +867,7 @@ html.lenis body {
 }
 
 .painting-btn-text-wipe {
-  background-image: linear-gradient(to right, #595959 50%, #1a1410 50%);
+  background-image: linear-gradient(to right, #FFFFFF 50%, #1a1410 50%);
   background-size: 200% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;
